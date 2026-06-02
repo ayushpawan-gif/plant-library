@@ -48,15 +48,7 @@ export default function AddPlant({ onDone }) {
     const thumb = await compressToThumbnail(file)
     setThumbnail(thumb)
 
-    const apiKey = await getSetting('apiKey')
-    if (!apiKey) {
-      // No key — go straight to manual edit
-      setIdentified(null)
-      setEditName('')
-      setEditCategory('other')
-      setStep('edit')
-      return
-    }
+    const apiKey = await getSetting('apiKey') // may be null — server key handles it
 
     try {
       const result = await identifyPlant(apiKey, thumb)
@@ -75,7 +67,9 @@ export default function AddPlant({ onDone }) {
       setIdentified(null)
       setEditName('')
       setEditCategory('other')
-      setError('Could not reach AI — please type the plant name.')
+      setError(err.message?.includes('No API key')
+        ? 'No AI key found. Add a Gemini key in Settings ⚙️'
+        : 'Could not identify plant — please type the name below.')
       setStep('edit')
     }
   }

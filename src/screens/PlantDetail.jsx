@@ -47,17 +47,15 @@ export default function PlantDetail({ plantId, onBack }) {
       let solutions = []
       let newTips = tips
 
-      if (apiKey) {
-        try {
-          const result = await analyzeHealth(apiKey, plant.name, plant.species, thumbnail)
-          healthScore = result.healthScore
-          assessmentConfidence = result.assessmentConfidence
-          diagnosis = result.diagnosis || ''
-          problems = result.problems || []
-          solutions = (result.solutions || []).map(s => ({ ...s, applied: false, appliedDate: null }))
-          newTips = result.solutions?.map(s => s.action) || tips
-        } catch (_) {}
-      }
+      try {
+        const result = await analyzeHealth(apiKey, plant.name, plant.species, thumbnail)
+        healthScore = result.healthScore
+        assessmentConfidence = result.assessmentConfidence
+        diagnosis = result.diagnosis || ''
+        problems = result.problems || []
+        solutions = (result.solutions || []).map(s => ({ ...s, applied: false, appliedDate: null }))
+        newTips = result.solutions?.map(s => s.action) || tips
+      } catch (_) {}
 
       await addSnapshot({ plantId, thumbnail, healthScore, assessmentConfidence, diagnosis, problems, solutions, aiNotes: diagnosis, tips: newTips })
       if (newTips.length > 0) await saveTips(plantId, newTips)

@@ -171,14 +171,8 @@ export default function GardenView() {
     await saveGarden(thumbnail, existingPins)
     setGarden(prev => ({ ...(prev || {}), thumbnail, pins: existingPins }))
 
-    // Auto-scan for plants
+    // Auto-scan for plants (server key handles auth even if local key is null)
     const apiKey = await getSetting('apiKey')
-    if (!apiKey) {
-      // No key — just show the photo, user can pin manually
-      await load()
-      return
-    }
-
     setScanning(true)
     try {
       const detected = await detectGardenPlants(apiKey, thumbnail)

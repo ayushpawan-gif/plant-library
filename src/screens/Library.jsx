@@ -113,19 +113,17 @@ export default function Library() {
       let problems = []
       let solutions = []
 
-      if (apiKey) {
-        const plant = plants.find(p => p.id === plantId)
-        try {
-          const result = await analyzeHealth(apiKey, plant.name, plant.species, thumbnail)
-          healthScore = result.healthScore
-          assessmentConfidence = result.assessmentConfidence
-          diagnosis = result.diagnosis || ''
-          problems = result.problems || []
-          solutions = (result.solutions || []).map(s => ({ ...s, applied: false, appliedDate: null }))
-          aiNotes = diagnosis
-          tips = solutions.map(s => s.action)
-        } catch (_) {}
-      }
+      const plant = plants.find(p => p.id === plantId)
+      try {
+        const result = await analyzeHealth(apiKey, plant.name, plant.species, thumbnail)
+        healthScore = result.healthScore
+        assessmentConfidence = result.assessmentConfidence
+        diagnosis = result.diagnosis || ''
+        problems = result.problems || []
+        solutions = (result.solutions || []).map(s => ({ ...s, applied: false, appliedDate: null }))
+        aiNotes = diagnosis
+        tips = solutions.map(s => s.action)
+      } catch (_) {}
 
       await addSnapshot({ plantId, thumbnail, healthScore, assessmentConfidence, diagnosis, problems, solutions, aiNotes, tips })
       const newSnap = await getLatestSnapshot(plantId)
