@@ -1,6 +1,6 @@
 export const config = { runtime: 'edge' }
 
-const MODEL = 'gemini-1.5-flash'
+const MODEL = 'gemini-2.0-flash'
 const BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 
 export default async function handler(req) {
@@ -18,7 +18,8 @@ export default async function handler(req) {
   }
 
   // Server env var takes priority; fall back to key sent from device
-  const apiKey = process.env.GEMINI_API_KEY || body.apiKey
+  const serverKey = process.env.GEMINI_API_KEY
+  const apiKey = (serverKey && serverKey.trim()) ? serverKey.trim() : (body.apiKey || '').trim()
 
   if (!apiKey) {
     return Response.json(
